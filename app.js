@@ -3,9 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose'); 
+
 
 //rotas 
+const authRouter = require('./routes/authRouter'); 
+const quadraRouter = require('./routes/quadraRouter'); 
+const reservaRouter = require('./routes/reservaRouter'); 
+const usuarioRouter = require('./routes/usuarioRouter');
 
 
 //conexão com o mongoDB 
@@ -26,6 +31,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+//rotas 
 
-
+app.use('/auth', authRouter); 
+app.use('/quadras', quadraRouter); 
+app.use('/reservas', reservaRouter); 
+app.use('/usuarios', usuarioRouter); 
 module.exports = app;
