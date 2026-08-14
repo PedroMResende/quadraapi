@@ -3,9 +3,10 @@ const Reserva = require('../models/reservasModel');
 
 async function criar(req,res) { 
     try {
+        //a reserva gera um ID, não confunda isso. 
         const reservaCriada = await Reserva.create({
             quadraId: req.body.quadraId, 
-            usuarioId: req.body.usuarioId, 
+            usuarioId: req.payload.id, 
             data: req.body.data,
             horaInicio: req.body.horaInicio, 
             horaFim: req.body.horaFim, 
@@ -27,7 +28,9 @@ async function listar(req,res) {
     }
 }
 
-async function buscar(req,res,next) {
+async function tentarBuscar(req,res,next) {
+
+    //aqui é o ID da reserva. 
     const {id} = req.params ; 
 
     if(!mongoose.Types.ObjectId.isValid(id)) {
@@ -67,4 +70,4 @@ async function remover(req,res) {
     return res.status(204).end(); 
 }
 
-module.exports = { criar, buscar, exibir, atualizar, remover, listar}
+module.exports = { criar, tentarBuscar, exibir, atualizar, remover, listar}
