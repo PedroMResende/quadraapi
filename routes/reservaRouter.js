@@ -7,13 +7,13 @@ router.post('/', verificarToken, reservaController.criar);
 
 //ver disponibilidade de reservas 
 router.get('/', verificarToken, reservaController.listar); 
-router.get('/:id', verificarToken, autorizarReserva, reservaController.buscar, reservaController.exibir); 
+router.get('/:id', verificarToken, reservaController.tentarBuscar, autorizarReserva, reservaController.exibir); 
 
 //atualizar o status de uma reserva
-router.put('/:id', verificarToken, autorizarReserva, reservaController.buscar, reservaController.atualizar); 
+router.put('/:id', verificarToken, reservaController.tentarBuscar, autorizarReserva, reservaController.atualizar); 
 
 //excluindo uma reserva
-router.delete('/:id', verificarToken, autorizarReserva, reservaController.buscar, reservaController.remover); 
+router.delete('/:id', verificarToken, reservaController.tentarBuscar, autorizarReserva, reservaController.remover); 
 
 
 
