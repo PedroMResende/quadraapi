@@ -21,7 +21,7 @@ function verificarToken(req,res,next) {
     
     const [tipo, token] = authorization.split(" "); 
     
-    if(tipo !== "Bearer" | !token) {
+    if(tipo !== "Bearer" || !token) {
         return res.status(401).json({msg: "Não autorizado"})
     }
     try { 

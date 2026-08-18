@@ -10,7 +10,6 @@ async function criar(req,res) {
                 tipo: req.body.tipo,
                 descricao: req.body.descricao, 
                 preco: req.body.preco, 
-                disponivel: true
             }
         ); 
         return res.status(201).json(novaQuadra)

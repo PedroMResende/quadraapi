@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www", 
     "dev" : "nodemon ./bin/www", 
-    "test": "jest --watchAll"
+    "test": "jest --watchAll", 
+    "seed:admin": "node ./seeds/adminSeed.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

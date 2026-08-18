@@ -1,6 +1,10 @@
 const express = require('express'); 
 const router = express.Router(); 
 
+const {verificarToken} = require('../middlewares/authMiddleware'); 
+const reservaController = require('../controllers/reservaController');
+const {autorizarReserva} = require('../middlewares/roleMiddleware');
+
 
 //criar uma reserva
 router.post('/', verificarToken, reservaController.criar); 

@@ -1,6 +1,9 @@
 const express = require('express'); 
 const router = express.Router(); 
 
+const quadraController = require('../controllers/quadraController'); 
+const {verificarToken} = require('../middlewares/authMiddleware');
+const {autorizarFuncoes} = require('../middlewares/roleMiddleware');
 
 //criar uma quadra
 router.post('/', verificarToken, autorizarFuncoes('admin'), quadraController.criar); 
