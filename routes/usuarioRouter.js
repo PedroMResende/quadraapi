@@ -3,6 +3,7 @@ const router = express.Router();
 
 const usuarioController = require('../controllers/usuarioController');
 const {verificarToken} = require('../middlewares/authMiddleware');
+const {autorizarFuncoes} = require('../middlewares/roleMiddleware');
 
 
 
