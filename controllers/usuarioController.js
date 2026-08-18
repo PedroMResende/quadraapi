@@ -64,10 +64,29 @@ async function atualizar(req,res) {
     }
 }; 
 
+async function promoverAdmin(req,res) {
+    try{
+        const usuarioPromovido = await Usuario.findOneAndUpdate(
+            {_id: req.usuario._id}, 
+            {
+                funcao: 'admin'
+            }, 
+            {
+                new: true, 
+                runValidators: true
+            }
+        ); 
+        
+        return res.status(200).json(usuarioPromovido); 
+    } catch(err) { 
+        return res.status(500).json({msg: "Erro ao promover o usuário"})
+    }
+}
+
 async function remover(req,res) {
     await Usuario.findOneAndDelete({_id: req.usuario._id});
     return res.status(204).end();
 }
 
 
-module.exports = {criar, listar, buscar, exibir, atualizar, remover}
+module.exports = {criar, listar, buscar, exibir, atualizar, promoverAdmin, remover}

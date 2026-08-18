@@ -1,6 +1,10 @@
 const express = require('express'); 
 const router = express.Router(); 
 
+const usuarioController = require('../controllers/usuarioController');
+const {verificarToken} = require('../middlewares/authMiddleware');
+
+
 
 //criar um usuario
 router.post('/', usuarioController.criar); 
@@ -11,6 +15,10 @@ router.get('/:id', verificarToken, autorizarFuncoes('admin'), usuarioController.
 //atualizar dados de um usuario
 router.put('/:id', verificarToken, autorizarFuncoes('admin'), usuarioController.buscar, usuarioController.atualizar); 
 
+//promover um usuario para admin
+
+router.put('/:id/promover', verificarToken, autorizarFuncoes('admin'), 
+usuarioController.buscar, usuarioController.promoverAdmin)
 //deletar um usuario
 router.delete('/:id', verificarToken, autorizarFuncoes('admin'),usuarioController.buscar, usuarioController.remover); 
 
