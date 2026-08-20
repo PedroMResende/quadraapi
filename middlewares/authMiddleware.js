@@ -22,13 +22,13 @@ function verificarToken(req,res,next) {
     const [tipo, token] = authorization.split(" "); 
     
     if(tipo !== "Bearer" || !token) {
-        return res.status(401).json({msg: "Não autorizado"})
+        return res.status(401).json({msg: "Tipo de token inválido"})
     }
     try { 
         req.payload = jwt.verify(token, process.env.JWT_SECRET); 
         next(); 
     } catch(err) {
-        return res.status(401).json({msg:"Token inválido."})
+        return res.status(401).json({msg:"Token inválido"})
     }
 }; 
 

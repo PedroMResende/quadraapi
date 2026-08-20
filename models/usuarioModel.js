@@ -31,15 +31,14 @@ const usuarioSchema = new mongoose.Schema({
 }
 ); 
 
-usuarioSchema.pre('save', async function(next) {
-    if(!this.isModified('senha')) return next(); 
+usuarioSchema.pre('save', async function() {
+    if(!this.isModified('senha')) return ; 
 
     try {
         const hashed = await bcrypt.hash(this.senha, SALT_ROUNDS); 
         this.senha = hashed; 
-        next(); 
     } catch(err){
-        next(err); 
+        throw(err); 
     }
 })
 
