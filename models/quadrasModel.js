@@ -9,7 +9,7 @@ const quadraSchema = new mongoose.Schema({
     }, 
     tipo: {
         type: String,
-        required: [true, 'É obrigatório passar o tipo da quadra.'], 
+        required: [true, 'É obrigatório passar um tipo válido de quadra.'], 
         trim:true, 
         enum: ['Futsal', 'Vôlei', 'Tênis','Society']
     }, 
@@ -18,7 +18,7 @@ const quadraSchema = new mongoose.Schema({
     }, 
     preco: {
         type: Number, 
-        required: [true, 'Obrigatório passar o preço'], 
+        required: [true, 'Obrigatório passar o preço.'], 
         min: [1, 'O preço deve ser no mínimo 1 real'], 
     }, 
     disponivel: {

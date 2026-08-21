@@ -476,5 +476,18 @@ describe('TESTES NO RECURSO /usuarios', () => {
         expect(response.headers['content-type']).toMatch(/json/); 
         expect(response.body.msg).toBe('Usuário não encontrado'); 
     })
-})
+}); 
+
+
+
+
+afterAll(async() => { 
+    const usuariosRemover = [idUsuario, idAdmin]; 
+
+    for (const id of usuariosRemover) {
+        if(id) {
+            await Usuario.findOneAndDelete({_id:id});
+        }
+    }
+}); 
 
