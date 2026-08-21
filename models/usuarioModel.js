@@ -12,7 +12,7 @@ const usuarioSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'É obrigatório digitar um e-mail'], 
-        // unique: true, -> Colocar o unique no final 
+        // unique: true,
         trim: true,
         lowercase: true,
         match: [/.+@.+\..+/, 'Por favor, informe um email válido.']
