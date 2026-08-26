@@ -23,7 +23,7 @@ const reservaSchema = new mongoose.Schema({
     horaFim: {
         type: String, 
         required: [true, 'É obrigatório passar a hora fim da reserva'], 
-        match: [/^([01]\d|2[0-3]):[0-5]\d$/, 'Horário de início inválido']
+        match: [/^([01]\d|2[0-3]):[0-5]\d$/, 'Horário de fim inválido']
     }, 
     status: {
         type: String, 

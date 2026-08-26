@@ -17,6 +17,16 @@ async function criar(req,res) {
             return res.status(409).json({msg: "Quadra não está disponível"})
         }; 
 
+        const regexHorario = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+        if (!regexHorario.test(req.body.horaInicio)) {
+            return res.status(422).json({ msg: "Horário de início inválido" });
+        }
+
+        if (!regexHorario.test(req.body.horaFim)) {
+            return res.status(422).json({ msg: "Horário de fim inválido" });
+        }
+
         //validar se o horário de início é menor que o horário de final 
         if(req.body.horaInicio >= req.body.horaFim) {
             return res.status(400).json({msg: "O horário de início deve ser menor que o horário de final"})
@@ -32,6 +42,7 @@ async function criar(req,res) {
             status: {$ne: 'cancelada'}
         }); 
 
+
         if(reservaConflitante) return res.status(409).json({msg: "A quadra já está reservada nesse horário"})
         //a reserva gera um ID, não confunda isso. 
         const reservaCriada = await Reserva.create({
@@ -43,7 +54,13 @@ async function criar(req,res) {
         }); 
         return res.status(201).json(reservaCriada); 
     } catch(err) {
-        return res.status(500).json({msg: "Erro na criação"})
+
+        if(err.name === 'ValidationError') {
+            return res.status(422).json({
+                msg: `Erro na criação: ${err.message}`
+            });
+        }
+        return res.status(500).json({msg: "Erro na criação"});
     }
 }; 
 
