@@ -14,7 +14,7 @@ async function criar(req,res) {
         ); 
         return res.status(201).json(novaQuadra)
     } catch(err){
-        return res.status(422).json({msg: "Erro de criação"})
+        return res.status(422).json({msg: "Erro na atualização: " + err.message})
     }
 }; 
 
@@ -55,12 +55,13 @@ async function atualizar(req,res) {
                 tipo: req.body.tipo, 
                 descricao: req.body.descricao, 
                 preco: req.body.preco, 
+                disponivel: req.body.disponivel
             }, 
             {new: true, runValidators: true}
         ); 
         return res.status(200).json(quadraAtualizada)
     } catch(err) {
-        return res.status(422).json({msg: "Erro na atualização"})
+        return res.status(422).json({msg: "Erro na atualização: " + err.message})
     }
 }; 
 

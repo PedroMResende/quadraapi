@@ -7,6 +7,7 @@ const {autorizarFuncoes} = require('../middlewares/roleMiddleware');
 
 
 
+
 //criar um usuario
 router.post('/', usuarioController.criar); 
 //listar todos os usuarios ou por ID 

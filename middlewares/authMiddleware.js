@@ -22,13 +22,13 @@ function verificarToken(req,res,next) {
     const [tipo, token] = authorization.split(" "); 
     
     if(tipo !== "Bearer" || !token) {
-        return res.status(401).json({msg: "Não autorizado"})
+        return res.status(401).json({msg: "Tipo de token inválido"})
     }
     try { 
         req.payload = jwt.verify(token, process.env.JWT_SECRET); 
         next(); 
     } catch(err) {
-        return res.status(401).json({msg:"Token inválido."})
+        return res.status(401).json({msg:"Token inválido"})
     }
 }; 
 
@@ -38,10 +38,10 @@ function renovarToken(req,res) {
             id: req.payload.id, 
             nome: req.payload.nome, 
             email: req.payload.email,
-            funcao: req.payload.funcao
+            funcao: req.payload.funcao, 
         }; 
         const novoToken = gerarToken(payload);
-        return res.status(200).json({token: `${novoToken}`});
+        return res.status(200).json({token: `${novoToken}`, renovar: "Renovou!"});
     } catch(err) {
         return res.status(500).json({msg:"Erro ao renovar token"})
     }
