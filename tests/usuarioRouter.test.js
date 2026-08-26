@@ -21,7 +21,6 @@ beforeAll(async() => {
         funcao: "admin"
     }); 
     idAdmin = adminCriado._id; 
-    console.log('ADMIN CRIADO COM SUCESSO')
 
     const usuarioCriado = await request.post(urlUsuario)
     .send(
@@ -32,7 +31,6 @@ beforeAll(async() => {
         }
     ); 
     idUsuario = usuarioCriado.body._id
-    console.log('USUARIO CRIADO COM SUCESSO');
 
     const resAdmin = await request.post(urlAuthLogin)
     .send({
@@ -40,7 +38,6 @@ beforeAll(async() => {
         senha: "123456"
     }); 
     tokenAdmin = resAdmin.body.token; 
-    console.log('ADMIN LOGADO COM SUCESSO')
 
     const resUsuario = await request.post(urlAuthLogin)
     .send({
@@ -48,7 +45,6 @@ beforeAll(async() => {
         senha:"joao123"
     }); 
     tokenUsuario = resUsuario.body.token; 
-    console.log('USUARIO LOGADO COM SUCESSO')
 });
 
 describe('TESTES NO RECURSO /usuarios', () => { 

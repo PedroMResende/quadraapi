@@ -38,10 +38,10 @@ function renovarToken(req,res) {
             id: req.payload.id, 
             nome: req.payload.nome, 
             email: req.payload.email,
-            funcao: req.payload.funcao
+            funcao: req.payload.funcao, 
         }; 
         const novoToken = gerarToken(payload);
-        return res.status(200).json({token: `${novoToken}`});
+        return res.status(200).json({token: `${novoToken}`, renovar: "Renovou!"});
     } catch(err) {
         return res.status(500).json({msg:"Erro ao renovar token"})
     }

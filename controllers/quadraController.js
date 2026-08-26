@@ -55,6 +55,7 @@ async function atualizar(req,res) {
                 tipo: req.body.tipo, 
                 descricao: req.body.descricao, 
                 preco: req.body.preco, 
+                disponivel: req.body.disponivel
             }, 
             {new: true, runValidators: true}
         ); 

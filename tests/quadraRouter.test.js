@@ -28,7 +28,6 @@ beforeAll(async() => {
     );
 
     idAdmin = adminCriado._id; 
-    console.log("ADMIN CRIADO COM SUCESSO"); 
 
     const usuarioCriado = await request.post(urlUsuario)
     .send(
@@ -40,7 +39,6 @@ beforeAll(async() => {
     ); 
 
     idUsuario = usuarioCriado.body._id; 
-    console.log('USUÁRIO CRIADO COM SUCESSO'); 
 
     const resAdmin = await request.post(urlLogin)
     .send(
@@ -50,7 +48,6 @@ beforeAll(async() => {
         }
     ); 
     tokenAdmin = resAdmin.body.token; 
-    console.log("ADMIN LOGADO COM SUCESSO"); 
 
     const resUsuario = await request.post(urlLogin)
     .send(
@@ -60,7 +57,6 @@ beforeAll(async() => {
         }
     ); 
     tokenUsuario = resUsuario.body.token; 
-    console.log("USUARIO LOGADO COM SUCESSO");
 }); 
 
 describe('TESTES NO RECURSO /quadras', () => {
@@ -102,9 +98,6 @@ describe('TESTES NO RECURSO /quadras', () => {
         expect(response.status).toBe(401); 
         expect(response.headers['content-type']).toMatch(/json/); 
         expect(response.body.msg).toBe("Não autorizado");
-
-        console.log(response.body._id)
-
     }); 
 
     test('POST /quadras (TOKEN INVÁLIDO) |DEVE RETORNAR 401|', async() => { 
@@ -555,3 +548,14 @@ describe('TESTES NO RECURSO /quadras', () => {
     })
 
 })
+
+afterAll(async() => {
+    const usuariosRemover = [idAdmin, idUsuario]; 
+
+    for (const id of usuariosRemover) {
+        if(id) {
+            await Usuario.findOneAndDelete({_id:id})
+        };
+    };
+})
+
