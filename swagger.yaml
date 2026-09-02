@@ -1,0 +1,1013 @@
+openapi: 3.1.1
+info:
+  title: API - Agendamento uso de quadras
+  description: Projeto de API REST desenvolvida com Express, como um objeto de estudo
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000/
+tags:
+  - name: auth
+    description: Autenticação e gerenciamento de tokens
+
+  - name: usuarios
+    description: Gerenciamento de usuários
+
+  - name: quadras
+    description: Gerenciamento de quadras
+
+  - name: reservas
+    description: Gerenciamento de reservas
+
+paths:
+#==================================================
+# LOGIN
+#==================================================
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Realiza o login do Usuário
+      requestBody:
+        description: Credenciais do usuário
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        200:
+          description: Usuario logado com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        401:
+          description: Email ou senha inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        500:
+          description: Erro interno na API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+  /auth/renovar: 
+    post:
+      tags:
+        - auth
+      summary: Renovar o token
+      security: 
+        - JWTAuth: []
+      requestBody:
+        description: Credencias e token antigo. 
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/RenovarToken'
+      responses:
+        200:
+          description: Token renovado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        401:
+          description: Autenticação inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        500:
+            description: Erro interno na API 
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Erro500'
+
+#==================================================
+# USUÁRIOS
+#==================================================
+
+  /usuarios:
+    post:
+      tags:
+        - usuarios
+      requestBody:
+        description: Um JSON com dados do usuário.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/criarUsuario'
+      responses:
+        201:
+          description: Usuario criado com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        422:
+          description: Erro na criação (Campos obrigatórios)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro422'
+    get:
+      tags:
+        - usuarios
+      summary: Lista os usuários
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: Usuarios encontrados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsuarioResponse'
+        401:
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        500:
+          description: Erro interno na API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+  /usuarios/{id}:
+    get:
+      summary: Busca um usuário por id
+      tags:
+        - usuarios
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Usuário encontrado. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Usuario não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+    put:
+      summary: Atualiza dados do usuário
+      tags:
+        - usuarios
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Credenciais do usuário
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        200:
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:  
+          description: Usuário não encontrado
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        422:
+          description: Erro na atualização (Erro nos campos obrigatórios)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro422'
+    delete:
+      summary: Excluir um usuário
+      tags:
+        - usuarios
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Usuário excluido com sucesso
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Falha na Autenticação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        
+  /usuarios/{id}/promover:
+    put:
+      summary: Promove usuário a admin
+      tags:
+        - usuarios
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Usuário promovido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        422:
+          description: Erro na atualização (Erro nos campos obrigatórios)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro422'
+        500:
+          description: Erro interno na API 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+
+#==================================================
+# QUADRA
+#==================================================
+  /quadras:
+    post:
+      summary: Criando uma quadra. 
+      tags:
+        - quadras
+      security: 
+        - JWTAuth: []
+      requestBody:
+        description: Dados sobre a quadra. 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quadra'
+      responses:
+        201:
+          description: Quadra criada com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quadra'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403: 
+          description: Acesso negado, sem permissão. 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Erro403'
+        422:
+          description: Erro na criação (Nos campos JSON)
+          content:  
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Erro422'
+    
+    get:
+      summary: Listando todas as quadras cadastradas. 
+      tags:
+        - quadras
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: Busca concluída. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quadra'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        500:
+          description: Erro interno na API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+  /quadras/{id}:
+    get:
+      summary: Listar quadra por ID. 
+      tags:
+        - quadras
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Quadra encontrada. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quadra'
+        400:
+          description: ID inválido. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        404:
+          description: Quadra não encontrada 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+    
+    put:
+      summary: Atualizar os dados de uma quadra
+      tags:
+        - quadras
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Dados da quadra. 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quadra'
+      responses:
+        200:
+          description: Quadra atualizada com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quadra'
+        400:
+          description: ID inválido. 
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Quadra não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        422:
+          description: Erro na atualização (Campos obrigatórios)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro422'
+    delete:
+      summary: Excluindo uma quadra
+      tags:
+        - quadras
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Quadra excluída com sucesso. 
+        400:
+          description: ID inválido. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão. 
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404: 
+          description: Quadra não encontrada. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+#==================================================
+# RESERVAS  
+#==================================================
+  /reservas:
+    post:
+      summary: Criar uma reserva. 
+      tags:
+        - reservas
+      security:
+        - JWTAuth: []
+      requestBody:
+        description: Dados da reserva
+        required: true
+        content:  
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reserva'
+      responses:
+        201:
+          description: Reserva criada com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        400:
+          description: O horário de início deve ser menor que o horário de final
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:  
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        404:
+          description: Quadra não encontrada. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        409:
+          description: Quadra não está disponível.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro409'
+        422:
+          description: Horário inválido. 
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro422'
+        500:
+          description: Erro interno na API 
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+              
+    get: 
+      summary: Ver disponibilidade das reservas. 
+      tags:
+        - reservas
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: Reservas encontradas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Reserva'
+        401:
+          description: Autenticação inválida. 
+          content:  
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        500:
+          description: Erro interno na API 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+
+  /reservas/{id}:
+    get:
+      summary: Buscar reserva por ID (Somente admin ou dono da reserva.)
+      tags:
+        - reservas
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Reserva encontrada com sucesso.
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        400:
+          description: Parâmetro inválido. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Reserva não encontrada. 
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Erro404'
+    put:
+      summary: Atualizar o status de uma reserva 
+      tags:
+        - reservas
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path  
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Dados da reserva
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reserva'
+      responses:
+        200:
+          description: Atualizado com sucesso. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        400:
+          description: Parâmetro inválido. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401: 
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Falta de permissão. 
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Reserva não encontrada 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        409:
+          description: Reserva cancelada não pode ser alterada. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro409'
+        500:
+          description: Erro interno na API 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+    delete:
+      summary: Excluindo uma reserva. 
+      tags:
+        - reservas
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Reserva excluída com sucesso. 
+        400:
+          description: Parâmetro inválido. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro400'
+        401:
+          description: Autenticação inválida. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro401'
+        403:
+          description: Acesso negado, sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro403'
+        404:
+          description: Reserva não encontrada 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro404'
+        500:
+          description: Erro interno na API 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro500'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+components:
+  schemas:
+
+    criarUsuario:
+      type: object
+      required:
+        - nome
+        - email
+        - senha
+      properties:
+        nome:
+          type: string
+          minLength: 3
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+
+    Login:
+      type: object
+      required:
+      - email
+      - senha
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+
+    RenovarToken:
+      type: object
+      required: 
+      - email
+      - senha
+      - token
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string 
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          
+
+    LoginResponse: 
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Usuario:
+      type: object
+      required:
+        - nome
+        - email
+        - senha
+        - funcao
+      properties:
+        nome:
+          type: string
+          minLength: 3
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+        funcao:
+          type: string
+          enum:
+            - usuario
+            - admin
+    
+    UsuarioResponse:
+      type: object
+      required:
+        - nome
+        - email
+        - funcao
+      properties:
+        nome:
+          type: string
+          minLength: 3
+        email:
+          type: string
+          format: email
+        funcao:
+          type: string
+          enum:
+            - usuario
+            - admin
+
+    Quadra:
+      type: object
+      required:
+        - nome
+        - tipo
+        - descricao
+        - preco
+        - disponivel
+      properties:
+        nome:
+          type: string
+        tipo:
+          type: string
+          enum:
+            - Futsal
+            - Vôlei
+            - Tênis
+            - Society
+        descricao:
+          type: string
+        preco:
+          type: number
+          minimum: 1
+        disponivel:
+          type: boolean
+          default: true
+
+    Reserva:
+      type: object
+      required:
+        - quadraId
+        - usuarioId
+        - data
+        - horaInicio
+        - horaFim
+      properties:
+        quadraId:
+          type: string
+          format: objectid
+          example: 64f8a7b2c3d4e5f678901234
+        usuarioId:
+          type: string
+          format: objectid
+          example: 64f8a7b2c3d4e5f678901234
+        data:
+          type: string
+          format: date
+          example: '2026-08-30'
+        horaInicio:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+          example: '08:00'
+        horaFim:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+          example: '10:00'
+        status:
+          type: string
+          enum:
+            - pendente
+            - confirmada
+            - cancelada
+          default: pendente
+# ERROS 
+    Erro400:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Parâmetro inválido'
+    Erro401:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Não autorizado'
+    Erro403:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Acesso negado, sem permissão'
+    Erro404:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'ID não encontrado'
+    Erro409:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Quadra não disponível'
+    Erro422:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Erro na operação'
+    Erro500:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: 'Erro interno na API'
+  securitySchemes:
+    JWTAuth:
+      type: apiKey
+      in: header
+      name: Authorization

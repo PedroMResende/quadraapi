@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 
 //rotas 
+const apiDocsRouter = require('./routes/apiDocs');
 const authRouter = require('./routes/authRouter'); 
 const quadraRouter = require('./routes/quadraRouter'); 
 const reservaRouter = require('./routes/reservaRouter'); 
@@ -33,6 +34,7 @@ app.use(cookieParser());
 
 //rotas 
 
+app.use('/api-docs', apiDocsRouter)
 app.use('/auth', authRouter); 
 app.use('/quadras', quadraRouter); 
 app.use('/reservas', reservaRouter); 

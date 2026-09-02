@@ -11,7 +11,14 @@ async function criar(req,res){
                 funcao: "usuario"
             }
         ); 
-        return res.status(201).json(usuarioCriado); 
+        return res.status(201).json(
+            {
+                _id: usuarioCriado._id,
+                nome: usuarioCriado.nome,
+                email: usuarioCriado.email,
+                funcao: usuarioCriado.funcao
+            }
+        ); 
     } catch(err) {
         return res.status(422).json({msg: "Erro na criação"})
     }
@@ -20,7 +27,16 @@ async function criar(req,res){
 async function listar(req,res) { 
     try {
         const usuariosCadastrados = await Usuario.find({});
-        return res.status(200).json(usuariosCadastrados);
+
+        const usuarios = usuariosCadastrados.map(usuario => {
+            return {
+                _id: usuario._id, 
+                nome: usuario.nome,
+                email: usuario.email, 
+                funcao: usuario.funcao
+            }
+        })
+        return res.status(200).json(usuarios);
     } catch(err) {
         return res.status(500).json({msg: "DEU RUIM...."})
     }
@@ -33,7 +49,8 @@ async function buscar(req,res, next) {
         return res.status(400).json({msg: "Parâmetro inválido"})
     };
 
-    const usuarioEncontrado = await Usuario.findOne({_id:id}); 
+    const usuarioEncontrado = await Usuario.findOne({_id:id});
+
 
     if(usuarioEncontrado) {
         req.usuario = usuarioEncontrado ; 
@@ -43,7 +60,16 @@ async function buscar(req,res, next) {
 }; 
 
 async function exibir(req,res) {
-    return res.status(200).json(req.usuario);
+    const usuario = req.usuario; 
+    
+    return res.status(200).json(
+        {
+            _id: usuario._id, 
+            nome: usuario.nome, 
+            email: usuario.email,
+            funcao: usuario.funcao
+        }
+    );
 }; 
 
 async function atualizar(req,res) {
@@ -57,7 +83,14 @@ async function atualizar(req,res) {
             {new: true, runValidators: true}
         ); 
 
-        return res.status(200).json(usuarioAtualizado); 
+        return res.status(200).json(
+            {
+                _id: usuarioAtualizado._id, 
+                nome: usuarioAtualizado.nome, 
+                email: usuarioAtualizado.email, 
+                funcao: usuarioAtualizado.funcao
+            }
+        ); 
     } catch(err) { 
         return res.status(422).json({msg: "Erro na atualização: " + err.message}); 
     }
@@ -76,7 +109,14 @@ async function promoverAdmin(req,res) {
             }
         ); 
         
-        return res.status(200).json(usuarioPromovido); 
+        return res.status(200).json(
+            {
+                _id: usuarioPromovido._id, 
+                nome: usuarioPromovido.nome, 
+                email: usuarioPromovido.email, 
+                funcao: usuarioPromovido.funcao
+            }
+        ); 
     } catch(err) { 
         return res.status(500).json({msg: "Erro ao promover o usuário"})
     }
